@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,9 +41,10 @@ INSTALLED_APPS = [
     "main.apps.MainConfig",
     "crispy_forms",
     "crispy_bootstrap5",
-    "django.contrib.sites",  # new
-    "allauth",  # new
-    "allauth.account",  # new
+    "django.contrib.sites",  # allauth
+    "allauth",  ## allauth
+    "allauth.account",  # allauth
+    'allauth.socialaccount',  # allauth
     'widget_tweaks', # bootstrap allauth
 
 ]
@@ -55,26 +57,26 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "allauth.account.middleware.AccountMiddleware",  # new
+    "allauth.account.middleware.AccountMiddleware",# allauth
 ]
 
 # django-allauth configurations
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",  # new
+    "allauth.account.auth_backends.AuthenticationBackend", # allauth
 ]
 
-SITE_ID = 1  # new
+SITE_ID = 1 # allauth
 
-ACCOUNT_EMAIL_VERIFICATION = "none"  # new
+ACCOUNT_EMAIL_VERIFICATION = "none"  # allauth
 
 ROOT_URLCONF = "website.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # new
-        "APP_DIRS": True,
+        "DIRS": [BASE_DIR / "templates"],  # allauth
+        "APP_DIRS": True,# allauth
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -143,4 +145,36 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_REDIRECT_URL = "/"  # new
+LOGIN_REDIRECT_URL = "/" # allauth
+ 
+ 
+ACCOUNT_FORMS = {
+     'login':  'main.forms.LoginForm',
+     'signup': 'main.forms.MyCustomSignupForm',
+     'signup': 'main.forms.MyCustomSignupForm',
+     'reset_password': 'main.forms.ResetPasswordForm',
+
+    #  'add_email': 'allauth.account.forms.AddEmailForm',
+    # 'change_password': 'allauth.account.forms.ChangePasswordForm',
+    # 'confirm_login_code': 'allauth.account.forms.ConfirmLoginCodeForm',
+    # 'login': 'allauth.account.forms.LoginForm',
+    # 'request_login_code': 'allauth.account.forms.RequestLoginCodeForm',
+    # 'reset_password': 'allauth.account.forms.ResetPasswordForm',
+    # 'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
+    # 'set_password': 'allauth.account.forms.SetPasswordForm',
+    # 'signup': 'allauth.account.forms.SignupForm',
+    # 'user_token': 'allauth.account.forms.UserTokenForm',
+
+}  # allauth
+
+ACCOUNT_EMAIL_REQUIRED = True  # Require email during signup
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # Require email confirmation
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # Use email for authentication
+ACCOUNT_UNIQUE_EMAIL = True  # Ensure emails are unique
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # Load from .env
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Load from .env
